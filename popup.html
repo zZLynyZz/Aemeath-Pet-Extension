@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { width: 220px; padding: 15px; font-family: sans-serif; text-align: center; }
+    img.logo { width: 80px; height: 80px; margin-bottom: 10px; }
+    button {
+      width: 100%; margin: 5px 0; padding: 8px; cursor: pointer;
+      border: none; border-radius: 5px; font-weight: bold; color: white; transition: 0.2s;
+    }
+    button:hover { opacity: 0.8; }
+    
+    #btnOff { background-color: #ff4d4d; }
+    #btnSummon { background-color: #8e44ad; } 
+    #btnOn { background-color: #28a745; display: none; }
+    #btnStand { background-color: #f39c12; } 
+    
+    /* Style cho thanh trượt Size */
+    .slider-container { margin: 15px 0; text-align: left; background: #f1f2f6; padding: 8px; border-radius: 5px; }
+    .slider-container label { font-size: 12px; font-weight: bold; color: #333; display: block; margin-bottom: 5px; }
+    input[type=range] { width: 100%; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <img class="logo" src="icon/icon128.png" alt="Aemeath Pet">
+  <h3 style="margin-top: 0; margin-bottom: 5px;">Aemeath Pet</h3>
+  
+  <div id="controlsOn">
+    <div class="slider-container">
+      <label for="sizeSlider">Size: <span id="sizeValue">120</span>px</label>
+      <input type="range" id="sizeSlider" min="60" max="250" value="120">
+    </div>
+
+    <button id="btnStand">Stand Mode: OFF</button>
+    <button id="btnSummon">Summon Pet</button>
+    <button id="btnOff">Turn Off</button>
+  </div>
+
+  <button id="btnOn">Turn On</button>
+
+  <script src="popup.js"></script>
+</body>
+</html>
