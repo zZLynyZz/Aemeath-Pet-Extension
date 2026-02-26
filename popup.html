@@ -15,9 +15,10 @@
     #btnSummon { background-color: #8e44ad; } 
     #btnOn { background-color: #28a745; display: none; }
     #btnStand { background-color: #f39c12; } 
+    #btnDance { background-color: #e84393; } 
+    #btnBreak { background-color: #00cec9; } /* Nút Free Pets màu xanh tự do */
     
-    /* Style cho thanh trượt Size */
-    .slider-container { margin: 15px 0; text-align: left; background: #f1f2f6; padding: 8px; border-radius: 5px; }
+    .slider-container { margin: 10px 0; text-align: left; background: #f1f2f6; padding: 8px; border-radius: 5px; }
     .slider-container label { font-size: 12px; font-weight: bold; color: #333; display: block; margin-bottom: 5px; }
     input[type=range] { width: 100%; cursor: pointer; }
   </style>
@@ -32,8 +33,15 @@
       <input type="range" id="sizeSlider" min="60" max="250" value="120">
     </div>
 
+    <div class="slider-container">
+      <label for="countSlider">Quantity: <span id="countValue">1</span></label>
+      <input type="range" id="countSlider" min="1" max="25" value="1">
+    </div>
+
+    <button id="btnDance">Dance All !</button>
+    <button id="btnSummon">Summon Pets</button>
+    <button id="btnBreak">Free Pets</button> 
     <button id="btnStand">Stand Mode: OFF</button>
-    <button id="btnSummon">Summon Pet</button>
     <button id="btnOff">Turn Off</button>
   </div>
 

@@ -3,54 +3,54 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnSummon = document.getElementById('btnSummon');
     const btnOn = document.getElementById('btnOn');
     const btnStand = document.getElementById('btnStand');
+    const btnDance = document.getElementById('btnDance'); 
+    const btnBreak = document.getElementById('btnBreak'); // Gọi nút Break
     const controlsOn = document.getElementById('controlsOn');
     
     const sizeSlider = document.getElementById('sizeSlider');
     const sizeValue = document.getElementById('sizeValue');
+    const countSlider = document.getElementById('countSlider');
+    const countValue = document.getElementById('countValue');
 
-    // Lấy trạng thái từ storage lúc vừa mở popup
-    chrome.storage.local.get(['isPetActive', 'isStandMode', 'petSize'], (result) => {
+    chrome.storage.local.get(['isPetActive', 'isStandMode', 'petSize', 'petCount'], (result) => {
         const isActive = result.isPetActive !== false; 
         const isStand = result.isStandMode === true; 
-        const currentSize = result.petSize || 120; // Size mặc định 120
+        const currentSize = result.petSize || 120; 
+        const currentCount = result.petCount || 1; 
         
         updateUI(isActive);
         updateStandUI(isStand);
         
-        // Cập nhật thanh trượt
         sizeSlider.value = currentSize;
         sizeValue.innerText = currentSize;
+        countSlider.value = currentCount;
+        countValue.innerText = currentCount;
     });
 
     function updateUI(isActive) {
-        if (isActive) {
-            controlsOn.style.display = 'block';
-            btnOn.style.display = 'none';
-        } else {
-            controlsOn.style.display = 'none';
-            btnOn.style.display = 'block';
-        }
+        if (isActive) { controlsOn.style.display = 'block'; btnOn.style.display = 'none'; } 
+        else { controlsOn.style.display = 'none'; btnOn.style.display = 'block'; }
     }
 
     function updateStandUI(isStand) {
-        if (isStand) {
-            btnStand.innerText = "Stand Mode: ON";
-            btnStand.style.backgroundColor = "#d68910"; 
-        } else {
-            btnStand.innerText = "Stand Mode: OFF";
-            btnStand.style.backgroundColor = "#f39c12"; 
-        }
+        if (isStand) { btnStand.innerText = "Stand Mode: ON"; btnStand.style.backgroundColor = "#d68910"; } 
+        else { btnStand.innerText = "Stand Mode: OFF"; btnStand.style.backgroundColor = "#f39c12"; }
     }
 
-    // --- LOGIC THANH TRƯỢT SIZE ---
     sizeSlider.addEventListener('input', (e) => {
         const newSize = e.target.value;
-        sizeValue.innerText = newSize; // Đổi số trên giao diện
-        chrome.storage.local.set({ petSize: newSize }); // Lưu vào bộ nhớ
-        sendMessageToContent({ action: "changeSize", size: newSize }); // Ép pet đổi size ngay lập tức
+        sizeValue.innerText = newSize; 
+        chrome.storage.local.set({ petSize: newSize }); 
+        sendMessageToContent({ action: "changeSize", size: newSize }); 
     });
 
-    // Các nút bấm cơ bản
+    countSlider.addEventListener('input', (e) => {
+        const newCount = parseInt(e.target.value);
+        countValue.innerText = newCount; 
+        chrome.storage.local.set({ petCount: newCount }); 
+        sendMessageToContent({ action: "changeCount", count: newCount }); 
+    });
+
     btnOff.addEventListener('click', () => {
         chrome.storage.local.set({ isPetActive: false });
         updateUI(false);
@@ -63,11 +63,11 @@ document.addEventListener('DOMContentLoaded', () => {
         sendMessageToContent({ action: "togglePet", status: true });
     });
 
-    // NÚT TRIỆU HỒI
-    btnSummon.addEventListener('click', () => {
-        sendMessageToContent({ action: "summonPet" });
-        window.close(); // Gọi xong thì tự đóng popup
-    });
+    btnSummon.addEventListener('click', () => { sendMessageToContent({ action: "summonPet" }); window.close(); });
+    btnDance.addEventListener('click', () => { sendMessageToContent({ action: "dancePet" }); });
+    
+    // --- GỬI LỆNH BREAK ---
+    btnBreak.addEventListener('click', () => { sendMessageToContent({ action: "breakPet" }); });
 
     btnStand.addEventListener('click', () => {
         chrome.storage.local.get(['isStandMode'], (result) => {
@@ -80,9 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function sendMessageToContent(message) {
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-            if (tabs[0]) {
-                chrome.tabs.sendMessage(tabs[0].id, message);
-            }
+            if (tabs[0]) chrome.tabs.sendMessage(tabs[0].id, message);
         });
     }
 });
