@@ -40,7 +40,6 @@ Since this extension is not yet published on the Chrome Web Store, you can insta
 
 ## 📝 Credits & Assets
 * **Character:** Aemeath (Wuthering Waves).
-* **Pixel Art / GIFs:** [Insert artist name or source here if you have it, otherwise leave as "Respective creators"]
 
 ---
 *Created with ❤️ and lots of JavaScript.*
