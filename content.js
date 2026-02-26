@@ -12,7 +12,7 @@ const happyGifs = [
 const flyGif = chrome.runtime.getURL("gif/fly.gif");
 const jumpGif = chrome.runtime.getURL("gif/jump.gif"); 
 const nothingGif = chrome.runtime.getURL("gif/nothing.gif");
-const sealGif = chrome.runtime.getURL("gif/cute.gif"); // Nạp hải cẩu
+const sealGif = chrome.runtime.getURL("gif/cute.gif"); 
 
 let isPetActive = true; 
 let isStandMode = false;
@@ -42,7 +42,7 @@ class Pet {
         
         this.actionTimeout = null;
         this.happyInterval = null;
-        this.danceInterval = null; // Thêm bộ đếm nhịp nhảy
+        this.danceInterval = null; 
         this.loopInterval = null;
         
         this.offsetX = 0;
@@ -109,7 +109,7 @@ class Pet {
     applyFailsafeTimeout() {
         clearTimeout(this.actionTimeout);
         if (this.currentState === "dancing") {
-            this.actionTimeout = setTimeout(() => { this.setIdle(true); }, 15000); // Concert kéo dài 15s nếu không ai Break
+            this.actionTimeout = setTimeout(() => { this.setIdle(true); }, 15000); 
         } else if (this.currentState === "summoning") {
             this.actionTimeout = setTimeout(() => { this.freezeForSummon(true); }, 3000);
         } else if (this.currentState === "frozen") {
@@ -123,7 +123,7 @@ class Pet {
         if (this.isDragging || !isPetActive) return;
         this.currentState = "idle";
         this.img.style.cursor = "grab";
-        clearInterval(this.danceInterval); // Dọn dẹp nhịp nhảy cũ
+        clearInterval(this.danceInterval); 
         
         let newIndex;
         do { newIndex = Math.floor(Math.random() * idleGifs.length); } while (newIndex === this.lastIdleIndex && idleGifs.length > 1);
@@ -152,7 +152,6 @@ class Pet {
                 
                 let hIndex = 0;
                 this.img.src = happyGifs[hIndex];
-                // Đổi tư thế mỗi 400ms tạo cảm giác vung tay theo nhạc
                 this.danceInterval = setInterval(() => {
                     hIndex = 1 - hIndex;
                     this.img.src = happyGifs[hIndex];
@@ -248,7 +247,7 @@ class Pet {
             this.currentState = "happy";
             this.img.style.cursor = "grabbing";
             this.img.style.transition = "none"; 
-            clearInterval(this.danceInterval); // Ngừng múa khi bị túm cổ
+            clearInterval(this.danceInterval); 
 
             const rect = this.img.getBoundingClientRect();
             this.offsetX = e.clientX - rect.left;
@@ -301,8 +300,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         let N = petsArray.length;
         let gap = currentSize * 0.9; 
         
-        // Gọi hàm từ file concert.js cực gọn
-        let positions = getFormationPositions(currentFormationIndex, N, gap);
+        
+        let positions = getFormationPositions(request.formation, N, gap);
 
         const screenCenterX = window.innerWidth / 2;
         const screenCenterY = window.innerHeight / 2;
@@ -336,15 +335,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             saveGlobalPetsData(); 
         }, 2000);
 
-        currentFormationIndex = (currentFormationIndex + 1) % 5;
     }
 
     // --- GỌI VŨ ĐẠO ---
     if (request.action === "dancePet") { 
         petsArray.forEach(pet => { 
-            // Tạm thời hardcode test thử điệu nhảy 1 tay (DANCE_MOVES.ONE_HAND)
-            // Sau này m có menu thả xuống thì sẽ truyền biến moveCode từ popup sang đây
-            pet.executeDanceMove(DANCE_MOVES.ONE_HAND, false); 
+            pet.executeDanceMove(DANCE_MOVES.JUMP, false); 
         }); 
         saveGlobalPetsData(); 
     }
@@ -380,6 +376,16 @@ chrome.storage.onChanged.addListener((changes) => {
         dataArray.forEach((data, index) => {
             if (petsArray[index] && !petsArray[index].isDragging) {
                 let pet = petsArray[index];
+                
+                let currentX = parseInt(pet.img.style.left || 0);
+                let currentY = parseInt(pet.img.style.top || 0);
+
+                if (pet.currentState === data.state && currentX === data.x && currentY === data.y) {
+                    return; 
+                }
+                
+                clearTimeout(pet.actionTimeout); 
+                clearInterval(pet.danceInterval);
                 
                 pet.img.style.left = `${data.x}px`;
                 pet.img.style.top = `${data.y}px`;

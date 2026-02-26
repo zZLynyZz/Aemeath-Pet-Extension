@@ -1,16 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
     const btnOff = document.getElementById('btnOff');
-    const btnSummon = document.getElementById('btnSummon');
     const btnOn = document.getElementById('btnOn');
     const btnStand = document.getElementById('btnStand');
     const btnDance = document.getElementById('btnDance'); 
-    const btnBreak = document.getElementById('btnBreak'); // Gọi nút Break
+    const btnBreak = document.getElementById('btnBreak'); 
     const controlsOn = document.getElementById('controlsOn');
     
     const sizeSlider = document.getElementById('sizeSlider');
     const sizeValue = document.getElementById('sizeValue');
     const countSlider = document.getElementById('countSlider');
     const countValue = document.getElementById('countValue');
+
+    const btnSummonDropdown = document.getElementById('btnSummonDropdown');
+    const summonOptions = document.getElementById('summonOptions');
+    const modeNames = ["1 Line", "2 Lines", "3 Lines", "A Shape", "Heart Shape"];
 
     chrome.storage.local.get(['isPetActive', 'isStandMode', 'petSize', 'petCount'], (result) => {
         const isActive = result.isPetActive !== false; 
@@ -63,7 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
         sendMessageToContent({ action: "togglePet", status: true });
     });
 
-    btnSummon.addEventListener('click', () => { sendMessageToContent({ action: "summonPet" }); window.close(); });
     btnDance.addEventListener('click', () => { sendMessageToContent({ action: "dancePet" }); });
     
     // --- GỬI LỆNH BREAK ---
@@ -83,4 +85,43 @@ document.addEventListener('DOMContentLoaded', () => {
             if (tabs[0]) chrome.tabs.sendMessage(tabs[0].id, message);
         });
     }
+
+    // --- LOGIC XỔ MENU VÀ CHỌN ĐỘI HÌNH ---
+    // Cập nhật tên nút lúc vừa mở popup (đọc từ ổ cứng)
+    chrome.storage.local.get(['formationMode'], (result) => {
+        const currentFormation = result.formationMode || 0;
+        if(btnSummonDropdown) btnSummonDropdown.innerText = `Formation: ${modeNames[currentFormation]} ▾`;
+    });
+
+    // Bấm nút thì xổ menu ra
+    btnSummonDropdown.addEventListener('click', () => {
+        summonOptions.classList.toggle('show');
+    });
+
+    // Bấm ra ngoài thì tự cụp menu lại
+    window.addEventListener('click', (event) => {
+        if (!event.target.matches('.dropbtn')) {
+            if (summonOptions.classList.contains('show')) {
+                summonOptions.classList.remove('show');
+            }
+        }
+    });
+
+    // Bấm chọn Mode
+    document.querySelectorAll('.dropdown-content a').forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            const selectedMode = parseInt(item.getAttribute('data-mode'));
+            
+            // 1. Đổi tên nút hiển thị ngay lập tức
+            btnSummonDropdown.innerText = `Formation: ${modeNames[selectedMode]} ▾`;
+            
+            // 2. Lưu vào trí nhớ Chrome
+            chrome.storage.local.set({ formationMode: selectedMode });
+            
+            // 3. Đóng menu lại và gửi lệnh sang content.js để pet bay
+            summonOptions.classList.remove('show');
+            sendMessageToContent({ action: "summonPet", formation: selectedMode });
+        });
+    });
 });

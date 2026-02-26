@@ -16,11 +16,25 @@
     #btnOn { background-color: #28a745; display: none; }
     #btnStand { background-color: #f39c12; } 
     #btnDance { background-color: #e84393; } 
-    #btnBreak { background-color: #00cec9; } /* Nút Free Pets màu xanh tự do */
+    #btnBreak { background-color: #00cec9; } 
     
     .slider-container { margin: 10px 0; text-align: left; background: #f1f2f6; padding: 8px; border-radius: 5px; }
     .slider-container label { font-size: 12px; font-weight: bold; color: #333; display: block; margin-bottom: 5px; }
     input[type=range] { width: 100%; cursor: pointer; }
+
+    /* CSS cho Dropdown Custom của nút Formation */
+    .dropdown { position: relative; display: block; width: 100%; margin: 5px 0; }
+    .dropbtn { background-color: #8e44ad; margin: 0; }
+    .dropdown-content {
+      display: none; position: absolute; background-color: #f1f2f6; width: 100%;
+      box-shadow: 0px 8px 16px rgba(0,0,0,0.2); z-index: 10; border-radius: 5px; overflow: hidden;
+      text-align: left;
+    }
+    .dropdown-content a {
+      color: #333; padding: 10px; text-decoration: none; display: block; font-size: 13px; font-weight: bold; border-bottom: 1px solid #ddd;
+    }
+    .dropdown-content a:hover { background-color: #dfe4ea; }
+    .show { display: block; }
   </style>
 </head>
 <body>
@@ -39,7 +53,18 @@
     </div>
 
     <button id="btnDance">Dance All !</button>
-    <button id="btnSummon">Summon Pets</button>
+    
+    <div class="dropdown">
+      <button id="btnSummonDropdown" class="dropbtn">Formation: 1 Line ▾</button>
+      <div id="summonOptions" class="dropdown-content">
+        <a href="#" data-mode="0">1 Line</a>
+        <a href="#" data-mode="1">2 Lines</a>
+        <a href="#" data-mode="2">3 Lines</a>
+        <a href="#" data-mode="3">A Shape</a>
+        <a href="#" data-mode="4">Heart Shape</a>
+      </div>
+    </div>
+    
     <button id="btnBreak">Free Pets</button> 
     <button id="btnStand">Stand Mode: OFF</button>
     <button id="btnOff">Turn Off</button>
